@@ -1,0 +1,261 @@
+[
+  {
+    "id": "task_001",
+    "difficulty": "easy",
+    "description": "Calculate 15 * 17 and save the result.",
+    "instruction": "Calculate 15 multiplied by 17. Save the result into result.txt.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "result.txt", "contains": "255"}],
+    "required_tool_order": ["calculator", "write_file"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 2,
+    "max_tool_calls": 2,
+    "min_steps": 3,
+    "max_steps": 5,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"calculator\",\"args\":{\"expression\":\"15*17\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"result.txt\",\"content\":\"255\"}}",
+      "FINAL: 15 * 17 = 255 and the result was saved to result.txt."
+    ]
+  },
+  {
+    "id": "task_002",
+    "difficulty": "easy",
+    "description": "Write and read a short file.",
+    "instruction": "Create hello.txt with a greeting, then read it back.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "hello.txt", "contains": "hello oop"}],
+    "required_tool_order": ["write_file", "read_file"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 2,
+    "max_tool_calls": 2,
+    "min_steps": 3,
+    "max_steps": 5,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"hello.txt\",\"content\":\"hello oop\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"hello.txt\"}}",
+      "FINAL: hello.txt contains hello oop."
+    ]
+  },
+  {
+    "id": "task_003",
+    "difficulty": "easy",
+    "description": "Get current time.",
+    "instruction": "Get the current local time and summarize it.",
+    "eval_type": "keyword",
+    "expected_keywords": ["time"],
+    "required_tools": ["time"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 1,
+    "max_tool_calls": 1,
+    "min_steps": 2,
+    "max_steps": 4,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"time\",\"args\":{}}",
+      "FINAL: The time tool returned the current local time."
+    ]
+  },
+  {
+    "id": "task_004",
+    "difficulty": "easy",
+    "description": "Compute text statistics.",
+    "instruction": "Count words in the text: object oriented agent agent.",
+    "eval_type": "keyword",
+    "expected_keywords": ["4", "3", "words", "unique"],
+    "required_tools": ["text_stats"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 1,
+    "max_tool_calls": 1,
+    "min_steps": 2,
+    "max_steps": 4,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"text_stats\",\"args\":{\"text\":\"object oriented agent agent\"}}",
+      "FINAL: The text has 4 words and 3 unique words."
+    ]
+  },
+  {
+    "id": "task_005",
+    "difficulty": "medium",
+    "description": "Calculate, persist and verify a note.",
+    "instruction": "Calculate (42 + 8) / 5. Only after obtaining the result, save a sentence with the answer in math/note.txt, read that file back, and report the verified answer.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "math/note.txt", "contains_all": ["The answer is 10", "verified"]}],
+    "expected_keywords": ["10", "verified"],
+    "required_tool_order": ["calculator", "write_file", "read_file"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 3,
+    "max_tool_calls": 4,
+    "min_steps": 4,
+    "max_steps": 6,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"calculator\",\"args\":{\"expression\":\"(42+8)/5\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"math/note.txt\",\"content\":\"The answer is 10; verified after calculation.\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"math/note.txt\"}}",
+      "FINAL: The verified answer is 10 and math/note.txt was reread."
+    ]
+  },
+  {
+    "id": "task_006",
+    "difficulty": "medium",
+    "description": "Use memory, branch on the result, and persist an audit.",
+    "instruction": "Remember that the project model is gemma4. Search memory for project model. If gemma4 is found, write PASS to memory/audit.txt and report the evidence.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "memory/audit.txt", "exact": "PASS: gemma4 found"}],
+    "expected_keywords": ["gemma4", "PASS"],
+    "required_tool_order": ["memory_save", "memory_search", "write_file"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 3,
+    "max_tool_calls": 4,
+    "min_steps": 4,
+    "max_steps": 6,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"memory_save\",\"args\":{\"text\":\"The project model is gemma4\",\"tags\":\"project,model\"}}",
+      "ACTION: {\"tool\":\"memory_search\",\"args\":{\"query\":\"project model\",\"limit\":3}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"memory/audit.txt\",\"content\":\"PASS: gemma4 found\"}}",
+      "FINAL: Memory search found gemma4, so memory/audit.txt contains PASS."
+    ]
+  },
+  {
+    "id": "task_007",
+    "difficulty": "medium",
+    "description": "Recover from a missing file before transforming content.",
+    "instruction": "Read draft.txt. If it is missing, create it with 'agent loop', read it again, count its words, and report the recovery.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "draft.txt", "contains": "agent loop"}],
+    "expected_keywords": ["2", "words", "recovered"],
+    "expected_observations": ["Cannot open file"],
+    "required_tool_order": ["read_file", "write_file", "read_file", "text_stats"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 4,
+    "max_tool_calls": 5,
+    "min_steps": 5,
+    "max_steps": 7,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"draft.txt\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"draft.txt\",\"content\":\"agent loop\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"draft.txt\"}}",
+      "ACTION: {\"tool\":\"text_stats\",\"args\":{\"text\":\"agent loop\"}}",
+      "FINAL: The missing file was recovered, reread, and the content has 2 words."
+    ]
+  },
+  {
+    "id": "task_008",
+    "difficulty": "medium",
+    "description": "Reject a path escape, then complete the safe write.",
+    "instruction": "A user supplied ../escape.txt path must be rejected. Then write a safe workspace summary to safe/summary.txt, read it back, and report that the safe path was used.",
+    "eval_type": "functional",
+    "expected_files": [{"path": "safe/summary.txt", "contains": "workspace inspected safely"}],
+    "expected_keywords": ["safe"],
+    "expected_observations": ["Path escapes workspace"],
+    "expected_tool_events": [
+      {"tool": "write_file", "args_contains": "../escape.txt", "result_contains": "Path escapes workspace"},
+      {"tool": "write_file", "args_contains": "safe/summary.txt", "result_contains": "Wrote"},
+      {"tool": "read_file", "args_contains": "safe/summary.txt", "result_contains": "workspace inspected safely"}
+    ],
+    "forbidden_paths": ["../escape.txt"],
+    "required_tool_order": ["write_file", "write_file", "read_file"],
+    "required_action_types": ["tool_call", "done"],
+    "min_tool_calls": 3,
+    "max_tool_calls": 3,
+    "min_steps": 4,
+    "max_steps": 6,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"../escape.txt\",\"content\":\"must not escape\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"safe/summary.txt\",\"content\":\"workspace inspected safely\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"safe/summary.txt\"}}",
+      "FINAL: The unsafe path was rejected and the safe workspace summary was written."
+    ]
+  },
+  {
+    "id": "task_009",
+    "difficulty": "hard",
+    "description": "Derive a conditional result from input data and preserve verified evidence.",
+    "instruction": "Read report/source.txt. Produce report/result.txt with the average score and PASS only when the average meets the threshold found in the source. The final answer must prove that the saved report was checked, word statistics were computed, and a persistent memory about the result can be retrieved. Choose any safe tool order that satisfies the dependencies.",
+    "eval_type": "functional",
+    "initial_files": [
+      {"path": "report/source.txt", "content": "scores=18,22,29\nthreshold=20\n"}
+    ],
+    "expected_files": [{"path": "report/result.txt", "contains_all": ["Average score is 23", "Threshold 20: PASS"], "not_contains": "FAIL"}],
+    "expected_keywords": ["23", "PASS", "7", "memory"],
+    "required_tools": ["read_file", "calculator", "write_file", "text_stats", "memory_save", "memory_search"],
+    "required_action_types": ["tool_call", "done"],
+    "expected_tool_event_order": "any",
+    "expected_tool_events": [
+      {"tool": "read_file", "args_contains": "report/source.txt", "result_contains": "scores=18,22,29"},
+      {"tool": "calculator", "args_contains": "18+22+29", "result_contains": "23"},
+      {"tool": "write_file", "args_contains": "report/result.txt", "result_contains": "Wrote"},
+      {"tool": "read_file", "args_contains": "report/result.txt", "result_contains": "Average score is 23"},
+      {"tool": "text_stats", "args_contains": "Average score is 23", "result_contains": "words=7"},
+      {"tool": "memory_save", "args_contains": "Score report average 23", "result_contains": "Memory saved"},
+      {"tool": "memory_search", "args_contains": "score report", "result_contains": "Score report average 23"}
+    ],
+    "ordered_event_pairs": [
+      {"first": {"tool": "read_file", "args_contains": "report/source.txt"}, "then": {"tool": "calculator", "args_contains": "18+22+29"}},
+      {"first": {"tool": "calculator", "result_contains": "23"}, "then": {"tool": "write_file", "args_contains": "report/result.txt"}},
+      {"first": {"tool": "write_file", "args_contains": "report/result.txt"}, "then": {"tool": "read_file", "args_contains": "report/result.txt"}},
+      {"first": {"tool": "memory_save", "args_contains": "Score report average 23"}, "then": {"tool": "memory_search", "args_contains": "score report"}}
+    ],
+    "min_tool_calls": 7,
+    "max_tool_calls": 9,
+    "min_steps": 8,
+    "max_steps": 11,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"report/source.txt\"}}",
+      "ACTION: {\"tool\":\"calculator\",\"args\":{\"expression\":\"(18+22+29)/3\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"report/result.txt\",\"content\":\"Average score is 23. Threshold 20: PASS\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"report/result.txt\"}}",
+      "ACTION: {\"tool\":\"text_stats\",\"args\":{\"text\":\"Average score is 23. Threshold 20: PASS\"}}",
+      "ACTION: {\"tool\":\"memory_save\",\"args\":{\"text\":\"Score report average 23: PASS\",\"tags\":\"score,report,audit\"}}",
+      "ACTION: {\"tool\":\"memory_search\",\"args\":{\"query\":\"score report\",\"limit\":3}}",
+      "FINAL: The checked report records average 23 and PASS, its 7 words were counted, and the score report memory was retrieved."
+    ]
+  },
+  {
+    "id": "task_010",
+    "difficulty": "hard",
+    "description": "Recover from a missing override, apply a rule, and audit a negative decision.",
+    "instruction": "Determine PASS or FAIL from the available condition files. An optional condition/override.txt takes priority; if it is unavailable, use condition/rule.txt. Write condition/result.txt, verify it, include text statistics, and prove the audit memory can be retrieved. Choose any safe tool order that satisfies the dependencies.",
+    "eval_type": "functional",
+    "initial_files": [
+      {"path": "condition/rule.txt", "content": "expression=17*2\ncomparison=>40\n"}
+    ],
+    "expected_files": [{"path": "condition/result.txt", "exact": "FAIL"}],
+    "expected_keywords": ["34", "FAIL", "audit"],
+    "expected_observations": ["Cannot open file: condition/override.txt"],
+    "required_tools": ["read_file", "calculator", "write_file", "text_stats", "memory_save", "memory_search"],
+    "required_action_types": ["tool_call", "done"],
+    "expected_tool_event_order": "any",
+    "expected_tool_events": [
+      {"tool": "read_file", "args_contains": "condition/override.txt", "result_contains": "Cannot open file"},
+      {"tool": "read_file", "args_contains": "condition/rule.txt", "result_contains": "expression=17*2"},
+      {"tool": "calculator", "args_contains": "17*2", "result_contains": "34"},
+      {"tool": "write_file", "args_contains": "condition/result.txt", "result_contains": "Wrote"},
+      {"tool": "read_file", "args_contains": "condition/result.txt", "result_contains": "FAIL"},
+      {"tool": "text_stats", "args_contains": "FAIL", "result_contains": "words=1"},
+      {"tool": "memory_save", "args_contains": "Conditional audit failed with 34", "result_contains": "Memory saved"},
+      {"tool": "memory_search", "args_contains": "conditional audit", "result_contains": "Conditional audit failed with 34"}
+    ],
+    "ordered_event_pairs": [
+      {"first": {"tool": "read_file", "args_contains": "condition/override.txt", "result_contains": "Cannot open file"}, "then": {"tool": "read_file", "args_contains": "condition/rule.txt"}},
+      {"first": {"tool": "read_file", "args_contains": "condition/rule.txt"}, "then": {"tool": "calculator", "args_contains": "17*2"}},
+      {"first": {"tool": "calculator", "result_contains": "34"}, "then": {"tool": "write_file", "args_contains": "condition/result.txt"}},
+      {"first": {"tool": "write_file", "args_contains": "condition/result.txt"}, "then": {"tool": "read_file", "args_contains": "condition/result.txt"}},
+      {"first": {"tool": "memory_save", "args_contains": "Conditional audit failed with 34"}, "then": {"tool": "memory_search", "args_contains": "conditional audit"}}
+    ],
+    "min_tool_calls": 8,
+    "max_tool_calls": 10,
+    "min_steps": 9,
+    "max_steps": 12,
+    "scripted_responses": [
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"condition/override.txt\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"condition/rule.txt\"}}",
+      "ACTION: {\"tool\":\"calculator\",\"args\":{\"expression\":\"17*2\"}}",
+      "ACTION: {\"tool\":\"write_file\",\"args\":{\"path\":\"condition/result.txt\",\"content\":\"FAIL\"}}",
+      "ACTION: {\"tool\":\"read_file\",\"args\":{\"path\":\"condition/result.txt\"}}",
+      "ACTION: {\"tool\":\"text_stats\",\"args\":{\"text\":\"FAIL\"}}",
+      "ACTION: {\"tool\":\"memory_save\",\"args\":{\"text\":\"Conditional audit failed with 34\",\"tags\":\"condition,audit\"}}",
+      "ACTION: {\"tool\":\"memory_search\",\"args\":{\"query\":\"conditional audit\",\"limit\":3}}",
+      "FINAL: The override was missing, the rule gives 17*2 = 34 which fails the >40 comparison, condition/result.txt contains FAIL, and the audit memory was retrieved."
+    ]
+  }
+]
