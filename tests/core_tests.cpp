@@ -364,6 +364,90 @@ void test_evaluator_trajectory_contract() {
     std::filesystem::remove_all(root);
 }
 
+#include "agent/message_queue.h"
+#include "agent/multi_agent.h"
+#include "core/vector_math.h"
+#include "tools/gui_tools.h"
+#include "tools/screenshot_tool.h"
+#include "tools/vector_memory_tools.h"
+
+void test_vector_math() {
+    std::vector<double> v1 = {1.0, 2.0, 3.0};
+    std::vector<double> v2 = {1.0, 2.0, 3.0};
+    std::vector<double> v3 = {-1.0, -2.0, -3.0};
+    std::vector<double> v_ortho1 = {1.0, 0.0};
+    std::vector<double> v_ortho2 = {0.0, 1.0};
+    CHECK(std::abs(cosine_similarity(v1, v2) - 1.0) < 1e-6);
+    CHECK(std::abs(cosine_similarity(v1, v3) - (-1.0)) < 1e-6);
+    CHECK(std::abs(cosine_similarity(v_ortho1, v_ortho2) - 0.0) < 1e-6);
+}
+
+void test_vector_memory() {
+    NativeEnvironment env(std::filesystem::temp_directory_path() / "oop_agent_test_vector_mem");
+    CHECK(env.prepare().has_value());
+    DefaultHttpClient http;
+    ToolExecutionContext context{env, http};
+
+    VectorMemorySaveTool saver;
+    VectorMemorySearchTool searcher;
+
+    Json save = Json::object();
+    save["text"] = "C++ OOP AI Agent Framework project";
+    save["tags"] = "cpp,agent";
+    CHECK(saver.execute(save, context).success);
+
+    Json search = Json::object();
+    search["query"] = "AI Agent project";
+    search["limit"] = 5;
+    auto res = searcher.execute(search, context);
+    CHECK(res.success);
+    CHECK(res.output.find("Cosine Similarity") != std::string::npos);
+}
+
+void test_gui_tools() {
+    NativeEnvironment env(std::filesystem::temp_directory_path() / "oop_agent_test_gui");
+    CHECK(env.prepare().has_value());
+    DefaultHttpClient http;
+    ToolExecutionContext context{env, http};
+
+    ScreenshotTool screenshot;
+    ClickTool click;
+    TypeTextTool type_text;
+    KeyPressTool key_press;
+
+    CHECK(screenshot.execute(Json::object(), context).success);
+    Json click_args = Json::object();
+    click_args["x"] = 100;
+    click_args["y"] = 200;
+    CHECK(click.execute(click_args, context).output.find("100, 200") != std::string::npos);
+
+    Json type_args = Json::object();
+    type_args["text"] = "hello";
+    CHECK(type_text.execute(type_args, context).output.find("hello") != std::string::npos);
+
+    Json key_args = Json::object();
+    key_args["key"] = "Enter";
+    CHECK(key_press.execute(key_args, context).output.find("Enter") != std::string::npos);
+}
+
+void test_multi_agent_queue() {
+    ThreadSafeMessageQueue<std::string> queue;
+    queue.push("msg1");
+    queue.push("msg2");
+    CHECK(queue.size() == 2);
+    CHECK(queue.try_pop() == "msg1");
+    CHECK(queue.wait_and_pop() == "msg2");
+    CHECK(queue.empty());
+
+    // Concurrent multi-threaded producer-consumer test
+    std::thread producer([&queue]() {
+        for (int i = 0; i < 5; ++i) {
+            queue.push("subtask_msg_" + std::to_string(i));
+        }
+    });
+    producer.join();
+    CHECK(queue.size() == 5);
+}
 
 int main() {
     test_json();
@@ -378,6 +462,10 @@ int main() {
     test_skill_loader();
     test_cpp26_preview_optional_range();
     test_evaluator_trajectory_contract();
+    test_vector_math();
+    test_vector_memory();
+    test_gui_tools();
+    test_multi_agent_queue();
     std::cout << "All core tests passed\n";
     return 0;
 }
