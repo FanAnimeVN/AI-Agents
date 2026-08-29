@@ -140,7 +140,7 @@ Agent_25127198_25127216/
 │   └── environment/            # Environment Sandbox Canonical Path
 ├── tests/                      # Bộ Unit Test tự động (tests/core_tests.cpp)
 ├── out/                        # Thư mục xuất kết quả Trajectory JSON và Benchmark Summary
-└── docs/                       # Chỉ gồm Báo cáo Word, Slide PPTX, và Sơ đồ UML Mermaid
+└── docs/                       # Sơ đồ UML, Báo cáo và Slide thuyết trình
     ├── Bao_Cao_Do_An_OOP_25127198_25127216.docx
     ├── Slide_Thuyet_Trinh_OOP_25127198_25127216.pptx
     └── uml_diagrams.md
