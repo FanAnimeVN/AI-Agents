@@ -96,12 +96,9 @@ cmake --build build --config Release
 
 Toàn bộ tài liệu chính thức theo quy định tại Mục VI, VIII & IX của Đề cương đồ án:
 
-* 📄 **Báo cáo Kỹ thuật Học thuật:** `docs/Bao_Cao_Do_An_OOP_25127198_25127216.docx` (Hoàn chỉnh, đầy đủ 9 sơ đồ vector 300 DPI, phân tích chi tiết kiến trúc và dữ liệu benchmark).
+* 📄 **Báo cáo Kỹ thuật Học thuật:** `docs/Bao_Cao_Do_An_OOP_25127198_25127216.docx` (Báo cáo tổng kết hoàn chỉnh, đầy đủ 9 sơ đồ vector 300 DPI, phân tích chi tiết kiến trúc và dữ liệu benchmark).
 * 📊 **Slide Thuyết trình Chính thức:** `docs/Slide_Thuyet_Trinh_OOP_25127198_25127216.pptx` (File PowerPoint 13 slides chuẩn mực học thuật và kỹ thuật).
-* 🎬 **Kịch bản Quay Video Demo Master:** `docs/Kich_Ban_Quay_Video_Demo_Master_Final.docx` (Đồng bộ 100% với 13 slides, phân vai chi tiết Huy & Ngọc).
-* 🖼️ **Bộ Title Cards Video Demo Minimalist:** `docs/title_cards_minimalist/` (7 ảnh Full HD 16:9 phong cách tối giản công nghệ).
-* 📐 **Sơ đồ Kiến trúc UML Mermaid:** `docs/class_diagram.mmd`, `docs/sequence_agent_run.mmd`, `docs/sequence_batch_eval.mmd`, `docs/component_diagram.mmd`.
-* 📁 **Bộ Sơ đồ Đồ họa 300 DPI:** `docs/figures_polished/` (Hình 1 đến Hình 9).
+* 📐 **Sơ đồ Kiến trúc UML (Mục IV.4.3):** `docs/uml_diagrams.md` (Bao gồm đầy đủ 4 sơ đồ Mermaid: Class Diagram, Agent Run Sequence Diagram, Batch Evaluation Sequence Diagram, Component Diagram).
 
 ---
 
@@ -143,5 +140,8 @@ Agent_25127198_25127216/
 │   └── environment/            # Environment Sandbox Canonical Path
 ├── tests/                      # Bộ Unit Test tự động (tests/core_tests.cpp)
 ├── out/                        # Thư mục xuất kết quả Trajectory JSON và Benchmark Summary
-└── docs/                       # Toàn bộ Báo cáo Word, Slide PPTX, và Sơ đồ UML
+└── docs/                       # Chỉ gồm Báo cáo Word, Slide PPTX, và Sơ đồ UML Mermaid
+    ├── Bao_Cao_Do_An_OOP_25127198_25127216.docx
+    ├── Slide_Thuyet_Trinh_OOP_25127198_25127216.pptx
+    └── uml_diagrams.md
 ```
