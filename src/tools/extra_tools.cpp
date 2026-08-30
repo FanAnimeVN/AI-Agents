@@ -3,8 +3,10 @@
 #include "core/string_utils.h"
 
 #include <chrono>
-#include <cstdlib>
+#if defined(__has_include) && __has_include(<generator>) && defined(__cpp_lib_generator)
 #include <generator>
+#define OOP_HAVE_GENERATOR 1
+#endif
 #include <iomanip>
 #include <set>
 #include <sstream>
@@ -12,11 +14,17 @@
 namespace oop {
 namespace {
 
+#if defined(OOP_HAVE_GENERATOR)
 std::generator<std::string> words(std::string_view text) {
     for (auto word : str::split_words(text)) {
         co_yield word;
     }
 }
+#else
+std::vector<std::string> words(std::string_view text) {
+    return str::split_words(text);
+}
+#endif
 
 }  // namespace
 

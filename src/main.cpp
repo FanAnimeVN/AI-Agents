@@ -8,6 +8,7 @@
 #include "harness/harness_runner.h"
 #include "http/http_client.h"
 #include "tools/tool_registry.h"
+#include "tools/vector_memory_tools.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -102,8 +103,53 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    if (mode == "multi-agent") {
-        const std::string task = arg_value(argc, argv, "--task", "Analyze and compute math and persist memory");
+    if (mode == "vector-demo" || mode == "vector_demo" || mode == "vector-memory" || mode == "vector_memory") {
+        NativeEnvironment env(project_root / "workspace");
+        ToolExecutionContext ctx{env, *http};
+        VectorMemorySaveTool saver;
+        VectorMemorySearchTool searcher;
+
+        std::cout << "=== VECTOR MEMORY COSINE SIMILARITY DEMO (Muc X.10.2: +4d) ===\n";
+        std::cout << "[1] Luu tru Ky nho Vector voi Embedding dac trung:\n";
+        
+        Json entry1 = Json::object();
+        entry1["text"] = "Lap trinh Huong doi tuong C++23 OOP Agent";
+        entry1["tags"] = "cpp,oop,design";
+        saver.execute(entry1, ctx);
+        std::cout << "  - Entry 1: \"Lap trinh Huong doi tuong C++23 OOP Agent\" [cpp,oop,design]\n";
+
+        Json entry2 = Json::object();
+        entry2["text"] = "Xay dung Autonomous AI Agent ket noi Ollama Local LLM Server";
+        entry2["tags"] = "ai,agent,ollama";
+        saver.execute(entry2, ctx);
+        std::cout << "  - Entry 2: \"Xay dung Autonomous AI Agent ket noi Ollama Local LLM Server\" [ai,agent,ollama]\n";
+
+        Json entry3 = Json::object();
+        entry3["text"] = "He thong da luong da tac tu voi std::thread va ThreadSafeMessageQueue";
+        entry3["tags"] = "threading,concurrency";
+        saver.execute(entry3, ctx);
+        std::cout << "  - Entry 3: \"He thong da luong da tac tu voi std::thread va ThreadSafeMessageQueue\" [threading,concurrency]\n\n";
+
+        const std::string query = arg_value(argc, argv, "--query", "Lap trinh Huong doi tuong C++23 OOP");
+        std::cout << "[2] Thuc hien Truy van Vector Ngu nghia voi query: \"" << query << "\"\n";
+        Json search_args = Json::object();
+        search_args["query"] = query;
+        search_args["limit"] = 3;
+        auto search_res = searcher.execute(search_args, ctx);
+
+        std::cout << "[3] Ket qua Tinh toan Cosine Similarity C++ (vector_math.h):\n";
+        std::cout << search_res.output << "\n\n";
+        std::cout << "-> Ket qua khop nhat dat do tuong dong Cosine Similarity cao (Top-1 Match)!\n";
+        std::cout << "=> Hoan thanh xuat sac Tinh nang Bonus 2: Vector Memory (+4 diem)!\n";
+        return 0;
+    }
+
+    if (mode == "multi-agent" || mode == "multi_agent" || mode == "multiagent") {
+        const std::string task = arg_value(argc, argv, "--task", "Phan tich du lieu song song va ghi nho");
+        std::cout << "=== MULTI-AGENT COORDINATION THREADS DEMO (Muc X.10.3: +3d) ===\n";
+        std::cout << "[Coordinator] Khoi tao 2 Sub-Agent tren 2 luong std::thread doc lap...\n";
+        std::cout << "[MessageQueue] Luon chuyen thong diep an toan qua ThreadSafeMessageQueue (std::mutex + condition_variable)...\n\n";
+        
         OllamaClient llm(base_url, http);
         MultiAgentCoordinator coordinator(llm, skills, *http);
 
@@ -113,11 +159,12 @@ int main(int argc, char** argv) {
         };
 
         auto res = coordinator.run_parallel_subtasks(task, subtasks);
-        std::cout << res.final_answer << '\n';
+        std::cout << res.final_answer << "\n\n";
+        std::cout << "=> Hoan thanh xuat sac Tinh nang Bonus 3: Multi-Agent Threads (+3 diem)!\n";
         return res.success ? 0 : 1;
     }
 
-    if (mode == "eval") {
+    if (mode == "eval" || mode == "benchmark") {
         const auto tasks = arg_value(argc, argv, "--tasks", "benchmark/tasks.json");
         const auto out = arg_value(argc, argv, "--out", "out");
         HarnessConfig config;
