@@ -1,0 +1,22 @@
+# Build directories and binary outputs
+build/
+out/
+bin/
+*.exe
+*.o
+*.obj
+*.a
+*.dll
+*.so
+*.dylib
+
+# Editor & IDE settings
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Local runtime & workspace caches
+workspace/
+*.log
+screenshot.bmp

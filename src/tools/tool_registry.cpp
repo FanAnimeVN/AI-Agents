@@ -9,6 +9,7 @@
 #include "tools/screenshot_tool.h"
 #include "tools/vector_memory_tools.h"
 #include "tools/web_search_tool.h"
+#include "tools/echo_reverse_tool.h"
 
 #include <algorithm>
 #include <sstream>
@@ -103,6 +104,7 @@ std::unique_ptr<ToolRegistry> make_default_tool_registry() {
     registry->register_tool(std::make_unique<SpawnSubagentTool>());
     registry->register_tool(std::make_unique<TextStatsTool>());
     registry->register_tool(std::make_unique<EnvironmentInfoTool>());
+    registry->register_tool(std::make_unique<EchoReverseTool>());
     // Register one default tool lazily to demonstrate the Factory path.
     registry->register_factory("time", [] {
         return std::make_unique<TimeTool>();
